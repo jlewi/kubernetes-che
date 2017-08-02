@@ -18,6 +18,18 @@ Usage
 
 This is based on [GKE's docs](https://cloud.google.com/container-engine/docs/tutorials/http-balancer)
 
+1. Create a secret
+ 
+ ```
+ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /tmp/tls.key -out /tmp/tls.crt -subj "/CN=jlewi-iap/O=jlewi-iap"
+ kubectl create secret generic tls --from-file=/tmp/tls.crt --from-file=/tmp/tls.key --namespace default
+ ```
+
+1. Follow the [instructions](https://cloud.google.com/iap/docs/enabling-gke-howto) for enabling IAP on GKE
+
+    * Make sure to specify a domain when turning on IAP
+
+1. Verify that hitting http(s)://<your host>/some/url redirects to Google login flow
 1. Deploy NGINX as an internal server
 
 

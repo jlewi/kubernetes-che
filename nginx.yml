@@ -27,19 +27,16 @@ metadata:
     # Set the value to the name of the static IP in GCP you want to use.
     # Note this is a global rule
     kubernetes.io/ingress.global-static-ip-name: jlewi-iap
-    #
-    kubernetes.io/ingress.class: "nginx"
-    kubernetes.io/tls-acme: "true"
 spec:
   # See https://kubernetes.io/docs/concepts/services-networking/ingress/#tls
   # We specify
   tls:
-    - secretName: che-tls-certificate
-      hosts:
-        - jlewi-iap.cloud-ml.io
-
-  rules:
-    - host: jlewi-iap.cloud-ml.io
+    - secretName: tls
+  backend:
+    serviceName: ngingx-ingress
+    servicePort: 80
+    #serviceName: spdyproxy
+    #servicePort: 44300
 
 
 

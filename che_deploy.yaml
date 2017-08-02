@@ -25,8 +25,8 @@ spec:
             - --key=/var/run/secrets/tls/tls.key
             - --cert=/var/run/secrets/tls/tls.crt
             # TODO: Set authentication.
-            - --user=jlewi
-            - --pass=123f234fad!
+            #- --user=jlewi
+            #- --pass=123f234fad!
             - --verbose
           ports:
             - containerPort: 44300
@@ -160,7 +160,7 @@ spec:
       volumes:
         - name: tls-vol
           secret:
-            secretName: che-tls-certificate
+            secretName: tls
         - name: lib-vol
           emptyDir: {}
         - name: storage-vol
