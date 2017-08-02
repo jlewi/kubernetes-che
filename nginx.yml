@@ -17,49 +17,12 @@ spec:
   selector:
     name: nginx-ingress-controller
 ---
-# We only need this Ingress rule to generate a TLS certificate.
-#
 # This ingress creates a loadbalancer that we will use with IAP.
+# It also configures the Ingress to get a certificate using kube-lego.
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: che-ingress
-  annotations:
-    # Set the value to the name of the static IP in GCP you want to use.
-    # Note this is a global rule
-    kubernetes.io/ingress.global-static-ip-name: jlewi-iap
-    #
-    #kubernetes.io/ingress.class: "nginx"
-    #kubernetes.io/tls-acme: "true"
-spec:
-  # See https://kubernetes.io/docs/concepts/services-networking/ingress/#tls
-  # We specify
-  tls:
-    - secretName: che-tls-certificate
-      hosts:
-        - jlewi-iap.cloud-ml.io
-  #rules:
-  #  - host: jlewi-iap.cloud-ml.io
-  rules:
-    - host: jlewi-iap.cloud-ml.io
-      #http:
-      #  paths:
-      #    - path: /
-      #      backend:
-      #        serviceName: nginx-ingress
-      #        servicePort: 80
-  #backend:
-  #  serviceName: nginx-ingress
-  #  servicePort: 80
-
----
-# We only need this Ingress rule to generate a TLS certificate.
-#
-# This ingress creates a loadbalancer that we will use with IAP.
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: nginx-ingress
   annotations:
     # Set the value to the name of the static IP in GCP you want to use.
     # Note this is a global rule
@@ -74,8 +37,11 @@ spec:
     - secretName: che-tls-certificate
       hosts:
         - jlewi-iap.cloud-ml.io
+
   rules:
     - host: jlewi-iap.cloud-ml.io
+
+
 
 ---
 # Nginx Ingress 
