@@ -1,3 +1,7 @@
+This is a fork of wernight@'s work.
+
+The goal is to get this running on GKE using IAP.
+
 kubernetes-che
 ==============
 
@@ -9,6 +13,14 @@ Note: Currently alpha state; barely tested.
 
 Usage
 -----
+
+### Setup HTTPS Load Balancing with Ingress
+
+This is based on [GKE's docs](https://cloud.google.com/container-engine/docs/tutorials/http-balancer)
+
+1. Deploy NGINX as an internal server
+
+
 
 ### Deployment
 

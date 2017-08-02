@@ -25,8 +25,8 @@ spec:
             - --key=/var/run/secrets/tls/tls.key
             - --cert=/var/run/secrets/tls/tls.crt
             # TODO: Set authentication.
-            #- --user=MY_USERNAME
-            #- --pass=MY_PASSWORD
+            - --user=jlewi
+            - --pass=123f234fad!
             - --verbose
           ports:
             - containerPort: 44300
@@ -103,9 +103,9 @@ spec:
           resources:
             requests:
               cpu: 5m
-              memory: "300Mi"
+              memory: "600Mi"
             limits:
-              memory: "1.0Gi"
+              memory: "2.0Gi"
           volumeMounts:
             - name: lib-vol
               mountPath: /home/user/che/lib-copy
@@ -171,3 +171,18 @@ spec:
           emptyDir: {}
         - name: no-service-account
           emptyDir: {}
+
+---        
+apiVersion: v1
+kind: Service
+metadata:
+  name: spdyproxy
+spec:
+  #type: LoadBalancer
+  # Should be the same IP as the Ingress controller.
+  #loadBalancerIP: 35.192.219.253
+  ports:
+    - port: 44300
+  selector:
+    app: che
+          
