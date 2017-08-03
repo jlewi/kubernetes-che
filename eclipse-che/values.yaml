@@ -1,5 +1,12 @@
 # Configure these values for your deployment.
 # Change static_ip to the static ip of your server
+# If using GCP use a regional static IP; global IPs don't seem to work.
 static_ip: 35.193.248.29
+
 # Set hostname to the host to use with LetsEncrypt
+# You will need to setup an A record in your domain for this host
+# that points at the static IP mentioned above.
 hostname: jlewi-gke-che.cloud-ml.io
+
+# The following values should work with the defaults.
+secret_name: che-tls-secret

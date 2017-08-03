@@ -1,6 +1,5 @@
 This is a fork of wernight@'s work.
 
-The goal is to get this running on GKE using IAP.
 
 kubernetes-che
 ==============
@@ -12,30 +11,18 @@ Note: Currently alpha state; barely tested.
 
 
 Usage
------
-
-### Setup HTTPS Load Balancing with Ingress
-
-This is based on [GKE's docs](https://cloud.google.com/container-engine/docs/tutorials/http-balancer)
-
-1. Create a secret
- 
- ```
- openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /tmp/tls.key -out /tmp/tls.crt -subj "/CN=jlewi-iap/O=jlewi-iap"
- kubectl create secret generic tls --from-file=/tmp/tls.crt --from-file=/tmp/tls.key --namespace default
- ```
-
-1. Follow the [instructions](https://cloud.google.com/iap/docs/enabling-gke-howto) for enabling IAP on GKE
-
-    * Make sure to specify a domain when turning on IAP
-
-1. Verify that hitting http(s)://<your host>/some/url redirects to Google login flow
-1. Deploy NGINX as an internal server
-
-
 
 ### Deployment
 
+1. Install the helm package
+
+
+    ``` bash
+    PASSWORD=<Some password>
+    helm install -f ./eclipse-che/values.yaml --set user=${USER} --set password=${PASSWORD} --set email=jlewi@google.com --name=${USER}-eclipse-che  ./eclipse-che
+```
+    * Note: You currently can't run more than 1 instance per cluster because kube-lego creates a service whose selector is not unique w.r.t to the helm package
+    * To do that I think we'd need to run each kube-lego package in its own namespace.
  1. You need a running [Kubernetes](http://kubernetes.io/) cluster (for example [Google Container Engine](https://cloud.google.com/container-engine/)).
  2. Edit `kubernetes.yml` and see the `TODO`; update with your values.
  3. Run `kubectl apply -f kubernetes.yml`

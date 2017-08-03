@@ -3,14 +3,14 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: kube-lego
+  name: {{ template "nameprefix" . }}-kube-lego
 spec:
   revisionHistoryLimit: 3
   replicas: 1
   template:
     metadata:
       labels:
-        name: kube-lego
+        name: {{ template "nameprefix" . }}-kube-lego
         # Required for auto-created kube-lego-nginx service to work.
         app: kube-lego
     spec:
@@ -34,6 +34,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
+            - name: LEGO_INGRESS_NAME_NGINX
+              value: {{ template "nameprefix" . }}-kube-lego-nginx
+            - name: LEGO_SERVICE_NAME_NGINX
+              value: {{ template "nameprefix" . }}-kube-lego-nginx
           readinessProbe:
             httpGet:
               path: /healthz

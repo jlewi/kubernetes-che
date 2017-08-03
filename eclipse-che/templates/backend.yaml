@@ -2,25 +2,25 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: default-http-backend
+  name: {{ template "nameprefix" . }}-default-http-backend
 spec:
   ports:
     - port: 80
       targetPort: 8080
   selector:
-    name: default-http-backend
+    name: {{ template "nameprefix" . }}-default-http-backend
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: default-http-backend
+  name: {{ template "nameprefix" . }}-default-http-backend
 spec:
   revisionHistoryLimit: 3
   replicas: 1
   template:
     metadata:
       labels:
-        name: default-http-backend
+        name: {{ template "nameprefix" . }}-default-http-backend
     spec:
       terminationGracePeriodSeconds: 60
       containers:

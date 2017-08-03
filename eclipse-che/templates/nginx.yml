@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx-ingress
+  name: {{ template "nameprefix" . }}-nginx-ingress
 spec:
   type: LoadBalancer
 
@@ -13,20 +13,20 @@ spec:
     - port: 443
       name: https
   selector:
-    name: nginx-ingress-controller
+    name: {{ template "nameprefix" . }}-nginx-ingress-controller
 
 ---
 # We only need this Ingress rule to generate a TLS certificate.
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: che-ingress
+  name: {{ template "nameprefix" . }}-che-ingress
   annotations:
     kubernetes.io/ingress.class: "nginx"
     kubernetes.io/tls-acme: "true"
 spec:
   tls:
-    - secretName: che-tls-certificate
+    - secretName: {{ template "nameprefix" . }}-tls-secret
       hosts:
         - {{ .Values.hostname }}
   rules:
@@ -37,14 +37,14 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: nginx-ingress-controller
+  name: {{ template "nameprefix" . }}-nginx-ingress-controller
 spec:
   revisionHistoryLimit: 3
   replicas: 1
   template:
     metadata:
       labels:
-        name: nginx-ingress-controller
+        name: {{ template "nameprefix" . }}-nginx-ingress-controller
     spec:
       terminationGracePeriodSeconds: 60
       containers:
@@ -56,7 +56,7 @@ spec:
             # Ingress controller redirects here for any unknown subdomain, that service should:
             # - Serve a HTTP/404 on /
             # - Serve a HTTP/200 on /healthz
-            - --default-backend-service=default/default-http-backend
+            - --default-backend-service=default/{{ template "nameprefix" . }}-default-http-backend
           # Use downward API
           env:
             - name: POD_NAME
