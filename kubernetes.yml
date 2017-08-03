@@ -6,7 +6,7 @@ metadata:
 spec:
   type: LoadBalancer
   # You can select a static IP for your Ingress controller so your can use DNS.
-  #loadBalancerIP: 10.10.10.10
+  loadBalancerIP: 35.193.248.29
   ports:
     - port: 80
       name: http
@@ -54,9 +54,9 @@ spec:
             - containerPort: 443
             # (Optional) Expose 18080 to access Nginx stats in url /nginx-status:
             #- containerPort: 18080
-          volumeMounts:
-            - name: tls-dhparam-vol
-              mountPath: /etc/nginx-ssl/dhparam
+          # volumeMounts:
+          #  - name: tls-dhparam-vol
+          #    mountPath: /etc/nginx-ssl/dhparam
           livenessProbe:
             httpGet:
               path: /healthz
@@ -71,9 +71,10 @@ spec:
             limits:
               memory: "500Mi"
       volumes:
-        - name: tls-dhparam-vol
-          secret:
-            secretName: ingress-tls-dhparam
+        # TODO(jlewi): Should add back dhparam
+        # - name: tls-dhparam-vol
+        #  secret:
+        #    secretName: ingress-tls-dhparam
 ---
 # Retrieves and updates TLS certificates from LetsEncrypt.org (ACME provider).
 apiVersion: extensions/v1beta1
@@ -99,7 +100,7 @@ spec:
           env:
             - name: LEGO_EMAIL
               # TODO: Put your e-mail here.
-              value: example@example.com
+              value: jlewi@google.com
             - name: LEGO_URL
               # Use Let's Encrypt production API URL (instead of default staging environment):
               value: "https://acme-v01.api.letsencrypt.org/directory"
@@ -197,10 +198,10 @@ spec:
     - secretName: che-tls-certificate
       hosts:
           # TODO: Put your hostname
-        - che.example.com
+        - jlewi-gke-che.cloud-ml.io
   rules:
       # TODO: Put your hostname
-    - host: che.example.com
+    - host: jlewi-gke-che.cloud-ml.io
 ---
 apiVersion: v1
 kind: Service
@@ -209,7 +210,7 @@ metadata:
 spec:
   type: LoadBalancer
   # Should be the same IP as the Ingress controller.
-  # loadBalancerIP: 10.10.10.10
+  loadBalancerIP: 35.193.248.29
   ports:
     - port: 44300
   selector:
@@ -242,8 +243,8 @@ spec:
             - --key=/var/run/secrets/tls/tls.key
             - --cert=/var/run/secrets/tls/tls.crt
             # TODO: Set authentication.
-            #- --user=MY_USERNAME
-            #- --pass=MY_PASSWORD
+            - --user=jlewi
+            - --pass=123fasdf1helm
             - --verbose
           ports:
             - containerPort: 44300
@@ -322,7 +323,7 @@ spec:
               cpu: 5m
               memory: "300Mi"
             limits:
-              memory: "1.0Gi"
+              memory: "2.0Gi"
           volumeMounts:
             - name: lib-vol
               mountPath: /home/user/che/lib-copy
