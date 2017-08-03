@@ -1,0 +1,4 @@
+apiVersion: v1
+description: A Helm chart for running Eclipse Che on Kubernetes
+name: eclipse-che
+version: 0.1.0

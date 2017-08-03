@@ -1,0 +1,96 @@
+# Ingress Controller LoadBalancer.
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-ingress
+spec:
+  type: LoadBalancer
+
+  loadBalancerIP: {{ .Values.static_ip }}
+  ports:
+    - port: 80
+      name: http
+    - port: 443
+      name: https
+  selector:
+    name: nginx-ingress-controller
+
+---
+# We only need this Ingress rule to generate a TLS certificate.
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: che-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/tls-acme: "true"
+spec:
+  tls:
+    - secretName: che-tls-certificate
+      hosts:
+        - {{ .Values.hostname }}
+  rules:
+    - host: {{ .Values.hostname }}
+      
+---
+# Nginx Ingress 
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-ingress-controller
+spec:
+  revisionHistoryLimit: 3
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: nginx-ingress-controller
+    spec:
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: nginx-ingress-controller
+          image: gcr.io/google_containers/nginx-ingress-controller:0.8.3
+          imagePullPolicy: Always
+          args:
+            - /nginx-ingress-controller
+            # Ingress controller redirects here for any unknown subdomain, that service should:
+            # - Serve a HTTP/404 on /
+            # - Serve a HTTP/200 on /healthz
+            - --default-backend-service=default/default-http-backend
+          # Use downward API
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          ports:
+            - containerPort: 80
+            - containerPort: 443
+            # (Optional) Expose 18080 to access Nginx stats in url /nginx-status:
+            #- containerPort: 18080
+          # volumeMounts:
+          #  - name: tls-dhparam-vol
+          #    mountPath: /etc/nginx-ssl/dhparam
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 10254
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+          resources:
+            requests:
+              cpu: 5m
+              memory: "100Mi"
+            limits:
+              memory: "500Mi"
+      # TODO(jlewi): We should generate a dhparam key for better security
+      # Refer to https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-16-04
+      # volumes:
+      #  - name: tls-dhparam-vol
+      #    secret:
+      #      secretName: ingress-tls-dhparam

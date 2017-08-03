@@ -1,0 +1,5 @@
+# Configure these values for your deployment.
+# Change static_ip to the static ip of your server
+static_ip: 35.193.248.29
+# Set hostname to the host to use with LetsEncrypt
+hostname: jlewi-gke-che.cloud-ml.io

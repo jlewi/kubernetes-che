@@ -1,5 +1,3 @@
-
-
 # Default web server if no Ingress rule applies.
 apiVersion: v1
 kind: Service

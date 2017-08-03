@@ -66,6 +66,8 @@ spec:
               # only on directory is needed to persist Che data.
             - name: CHE_WORKSPACE_STORAGE
               value: /projects
+            - name: CHE_LOG_LEVEL
+              value: DEBUG
               # Uncomment to give access to a Google Container Registry
               # See http://stackoverflow.com/a/43140504/167897 to see
               # we cnnot use the UI because GCE passwords are too long
@@ -160,7 +162,8 @@ spec:
       volumes:
         - name: tls-vol
           secret:
-            secretName: tls
+            # TODO(jlewi): Make the name release specific.
+            secretName: che-tls-certificate
         - name: lib-vol
           emptyDir: {}
         - name: storage-vol
