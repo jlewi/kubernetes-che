@@ -10,6 +10,11 @@ So what you get is a Che server running on your cluster behind [SPDY Proxy](http
 Note: Currently alpha state; barely tested.
 
 
+TODO:
+
+    * Limitations need to use a persistent disk so data isn't lost if pod
+      goes down.
+      
 Usage
 
 ### Deployment
